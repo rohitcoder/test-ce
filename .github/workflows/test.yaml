@@ -1,7 +1,7 @@
 name: Log Egress Traffic
 
 on:
-  push:  # Runs on every commit push
+  push:  # Runs on every commit push 
     branches:
       - main  # Change if you want to track other branches
 
