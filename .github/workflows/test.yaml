@@ -14,7 +14,8 @@ jobs:
 
       - name: Setup Bolt
         uses: koalalab-inc/bolt@v1
-        mode: 'active'
+        with:
+          mode: 'active'
 
       - name: Get changed files
         id: changed-files
