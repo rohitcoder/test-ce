@@ -57,6 +57,7 @@ jobs:
       - name: Simulate network requests (for testing)
         run: |
           curl -s https://example.com
+          curl -s https://codex-api.securable.ai
           wget -q https://example.com
 
       - name: Stop tcpdump and send logs
