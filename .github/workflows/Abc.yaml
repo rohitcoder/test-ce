@@ -1,0 +1,50 @@
+name: Run Tetragon on Commit
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  run-tetragon:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Tetragon
+        run: |
+          sudo apt update
+          sudo apt install -y curl
+          curl -LO https://github.com/cilium/tetragon/releases/latest/download/tetragon-linux-amd64
+          chmod +x tetragon-linux-amd64
+          sudo mv tetragon-linux-amd64 /usr/local/bin/tetragon
+
+      - name: Start Tetragon in Background
+        run: |
+          mkdir -p /tmp/results
+          sudo tetragon -o json > /tmp/results/tetragon_output.json 2>&1 &
+          echo $! > /tmp/tetragon_pid  # Save process ID
+
+      - name: Run Workload (Capture Events)
+        run: |
+          echo "Running workload to generate events..."
+          sleep 10  # Replace this with your actual workload (e.g., tests, scripts)
+
+      - name: Stop Tetragon and Save Logs
+        run: |
+          sudo kill $(cat /tmp/tetragon_pid) || true
+          sleep 5  # Allow logs to flush
+
+      - name: Upload Tetragon results
+        uses: actions/upload-artifact@v4
+        with:
+          name: tetragon-results
+          path: /tmp/results/tetragon_output.json
