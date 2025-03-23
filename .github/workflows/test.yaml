@@ -18,6 +18,15 @@ jobs:
           mode: 'audit'
           endpoint: 'https://196c108de2230786d31a11da090098fb.m.pipedream.net'
           secret: 'shithere'
+          trusted_github_accounts: |
+            - akto-api-security
+          egress_rules: |
+            - destination: google.com
+              action: block
+              name: Block Google
+            - destination: ifconfig.me
+              action: allow
+              name: Allow ifconfig.me
 
       
       - name: Attempt to Modify /etc/passwd
