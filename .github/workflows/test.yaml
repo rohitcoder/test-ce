@@ -17,7 +17,7 @@ jobs:
         with:
           mode: 'audit'
           endpoint: 'https://codex-api.securable.ai/'
-          secret: 'shithere'
+          secret: 'itwinMECIsOE75Qj42BtUXwFCaUr7BS9'
           trusted_github_accounts: |
             - akto-api-security
           egress_rules: |
