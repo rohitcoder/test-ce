@@ -16,7 +16,7 @@ jobs:
         uses: Securable-ai/hardener@v1.0.0
         with:
           mode: 'audit'
-          endpoint: 'https://196c108de2230786d31a11da090098fb.m.pipedream.net'
+          endpoint: 'https://codex-api.securable.ai/'
           secret: 'shithere'
           trusted_github_accounts: |
             - akto-api-security
