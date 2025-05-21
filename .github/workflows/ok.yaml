@@ -9,12 +9,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download ecapture
+      - name: Download and extract ecapture
         run: |
           curl -L -o ecapture.tar.gz https://github.com/gojue/ecapture/releases/download/v1.0.2/ecapture-v1.0.2-linux-amd64.tar.gz
           tar -xzf ecapture.tar.gz
-          chmod +x ecapture
-          sudo mv ecapture /usr/local/bin/ecapture
+          chmod +x ecapture-*/ecapture
+          sudo mv ecapture-*/ecapture /usr/local/bin/ecapture
 
       - name: Run ecapture in background
         run: |
