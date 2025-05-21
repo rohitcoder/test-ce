@@ -17,7 +17,6 @@ jobs:
           docker run -d --name ebpf_detector1 --privileged \
           --pid=host \
           --network=host \
-          -v /sys:/sys \
           gojue/ecapture:latest tls
 
       - name: Wait for eBPF to attach
