@@ -18,7 +18,7 @@ jobs:
           --pid=host \
           --network=host \
           -v /sys:/sys \
-          gojue/ecapture:latest
+          gojue/ecapture:latest tls
 
       - name: Wait for eBPF to attach
         run: sleep 10
