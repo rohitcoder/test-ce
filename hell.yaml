@@ -1,0 +1,65 @@
+name: Run ROC Sensor in GitHub Actions
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-roc:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Prepare host directories
+        run: |
+          sudo mkdir -p /tmp/roc-output /tmp/roc-config
+          echo "patterns:
+  - id: 'api_key'
+    regex: '(?i)api[_-]?key\\s*[:=]\\s*[A-Za-z0-9\\-_]{16,}'
+  - id: 'authorization_bearer'
+    regex: 'Bearer\\s+[A-Za-z0-9\\-._~+/]+=*'
+  - id: 'email'
+    regex: '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}'" > /tmp/roc-config/pattern.yaml
+
+      - name: Run ROC container (privileged)
+        run: |
+          echo "Starting ROC privileged container..."
+          docker run -d --name roc-test \
+            --privileged \
+            --pid=host \
+            --network=host \
+            -v /proc:/proc \
+            -v /sys:/sys \
+            -v /lib:/lib:ro \
+            -v /usr/lib:/usr/lib:ro \
+            -v /tmp/roc-output:/tmp/roc-output \
+            -v /tmp/roc-config/pattern.yaml:/tmp/roc-config/pattern.yaml \
+            hanshal785/roc:latest \
+            --server-url https://api.codexsecurity.io \
+            --api-key yDqEcKBwtkiXdmBx1ecJl4M0wkpHZaqf \
+            --patterns /tmp/roc-config/pattern.yaml \
+            --watch /tmp/roc-output
+
+          sleep 10
+          echo "ROC container started."
+
+      - name: Generate test curl activity
+        run: |
+          echo "Running curl activity to simulate outbound network..."
+          curl -s https://example.com > /dev/null || true
+          curl -s -X POST https://httpbin.org/post -d '{"hello":"roc"}' \
+            -H "Content-Type: application/json" > /dev/null || true
+
+      - name: Print ROC logs
+        run: |
+          echo "Fetching ROC container logs..."
+          docker logs roc-test || true
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker rm -f roc-test || true
+          sudo rm -rf /tmp/roc-output /tmp/roc-config
