@@ -13,10 +13,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Prepare host directories
+      - name: Prepare config file
         run: |
-          sudo mkdir -p /tmp/roc-output /tmp/roc-config
-          cat <<'EOF' | sudo tee /tmp/roc-config/pattern.yaml
+          mkdir -p /tmp/roc-output /tmp/roc-config
+          cat <<'EOF' > /tmp/roc-config/pattern.yaml
           patterns:
             - id: "api_key"
               regex: "(?i)api[_-]?key\\s*[:=]\\s*[A-Za-z0-9\\-_]{16,}"
@@ -25,6 +25,9 @@ jobs:
             - id: "email"
               regex: "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
           EOF
+
+          echo "Pattern file written at /tmp/roc-config/pattern.yaml"
+          ls -l /tmp/roc-config/
 
       - name: Run ROC container (privileged)
         run: |
@@ -38,20 +41,21 @@ jobs:
             -v /lib:/lib:ro \
             -v /usr/lib:/usr/lib:ro \
             -v /tmp/roc-output:/tmp/roc-output \
-            -v /tmp/roc-config/pattern.yaml:/tmp/roc-config/pattern.yaml \
+            -v /tmp/roc-config:/tmp/roc-config:ro \
             hanshal785/roc:latest \
             --server-url https://api.codexsecurity.io \
             --api-key dummyapikey1234567890 \
             --patterns /tmp/roc-config/pattern.yaml \
             --watch /tmp/roc-output
-          sleep 10
-          echo "ROC container started."
 
-      - name: Generate test curl activity
+          echo "Waiting for ROC to start..."
+          sleep 10
+
+      - name: Simulate curl traffic
         run: |
-          echo "Running curl activity to simulate outbound network..."
+          echo "Generating curl traffic..."
           curl -s https://example.com > /dev/null || true
-          curl -s -X POST https://httpbin.org/post -d '{"hello":"roc"}' \
+          curl -s -X POST https://httpbin.org/post -d '{"roc":"test"}' \
             -H "Content-Type: application/json" > /dev/null || true
 
       - name: Print ROC logs
@@ -63,4 +67,4 @@ jobs:
         if: always()
         run: |
           docker rm -f roc-test || true
-          sudo rm -rf /tmp/roc-output /tmp/roc-config
+          rm -rf /tmp/roc-output /tmp/roc-config
