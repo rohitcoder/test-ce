@@ -16,13 +16,15 @@ jobs:
       - name: Prepare host directories
         run: |
           sudo mkdir -p /tmp/roc-output /tmp/roc-config
-          echo "patterns:
-  - id: 'api_key'
-    regex: '(?i)api[_-]?key\\s*[:=]\\s*[A-Za-z0-9\\-_]{16,}'
-  - id: 'authorization_bearer'
-    regex: 'Bearer\\s+[A-Za-z0-9\\-._~+/]+=*'
-  - id: 'email'
-    regex: '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}'" > /tmp/roc-config/pattern.yaml
+          cat <<'EOF' | sudo tee /tmp/roc-config/pattern.yaml
+          patterns:
+            - id: "api_key"
+              regex: "(?i)api[_-]?key\\s*[:=]\\s*[A-Za-z0-9\\-_]{16,}"
+            - id: "authorization_bearer"
+              regex: "Bearer\\s+[A-Za-z0-9\\-._~+/]+=*"
+            - id: "email"
+              regex: "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
+          EOF
 
       - name: Run ROC container (privileged)
         run: |
@@ -39,10 +41,9 @@ jobs:
             -v /tmp/roc-config/pattern.yaml:/tmp/roc-config/pattern.yaml \
             hanshal785/roc:latest \
             --server-url https://api.codexsecurity.io \
-            --api-key yDqEcKBwtkiXdmBx1ecJl4M0wkpHZaqf \
+            --api-key dummyapikey1234567890 \
             --patterns /tmp/roc-config/pattern.yaml \
             --watch /tmp/roc-output
-
           sleep 10
           echo "ROC container started."
 
