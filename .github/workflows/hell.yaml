@@ -41,7 +41,7 @@ jobs:
             -v /lib:/lib:ro \
             -v /usr/lib:/usr/lib:ro \
             -v /tmp/roc-output:/tmp/roc-output \
-            -v /tmp/roc-config:/tmp/roc-config:ro \
+            -v /tmp/roc-config:/tmp/roc-config \
             hanshal785/roc:latest \
             --server-url https://api.codexsecurity.io \
             --api-key dummyapikey1234567890 \
