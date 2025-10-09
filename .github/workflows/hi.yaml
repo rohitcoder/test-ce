@@ -1,6 +1,6 @@
 name: Build with Cached Docker Image
 
-on: [push]
+on: [pushwe]
 
 jobs:
   build:
