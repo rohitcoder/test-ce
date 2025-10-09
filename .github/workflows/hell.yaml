@@ -41,15 +41,13 @@ jobs:
             -v /lib:/lib:ro \
             -v /usr/lib:/usr/lib:ro \
             -v /tmp/roc-output:/tmp/roc-output \
-            -v /tmp/roc-config:/tmp/roc-config \
+            -v /tmp/roc-config:/roc-config:ro \
             hanshal785/roc:latest \
             --server-url https://api.codexsecurity.io \
             --api-key dummyapikey1234567890 \
-            --patterns /tmp/roc-config/pattern.yaml \
+            --patterns /roc-config/pattern.yaml \
             --watch /tmp/roc-output
 
-          echo "Waiting for ROC to start..."
-          sleep 10
 
       - name: Simulate curl traffic
         run: |
