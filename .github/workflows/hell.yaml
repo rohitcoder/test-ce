@@ -17,16 +17,17 @@ jobs:
         run: |
           mkdir -p /tmp/roc-output /tmp/roc-config
           cat <<'EOF' > /tmp/roc-config/pattern.yaml
-          patterns:
-            - id: "api_key"
-              regex: "(?i)api[_-]?key\\s*[:=]\\s*[A-Za-z0-9\\-_]{16,}"
-            - id: "authorization_bearer"
-              regex: "Bearer\\s+[A-Za-z0-9\\-._~+/]+=*"
-            - id: "email"
-              regex: "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
-          EOF
+patterns:
+  - id: "api_key"
+    regex: "(?i)api[_-]?key\\s*[:=]\\s*[A-Za-z0-9\\-_]{16,}"
+  - id: "authorization_bearer"
+    regex: "Bearer\\s+[A-Za-z0-9\\-._~+/]+=*"
+  - id: "email"
+    regex: "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
+EOF
 
           echo "Pattern file written at /tmp/roc-config/pattern.yaml"
+          cat /tmp/roc-config/pattern.yaml
           ls -l /tmp/roc-config/
 
       - name: Run ROC container (privileged)
@@ -47,7 +48,6 @@ jobs:
             --api-key dummyapikey1234567890 \
             --patterns /roc-config/pattern.yaml \
             --watch /tmp/roc-output
-
 
       - name: Simulate curl traffic
         run: |
